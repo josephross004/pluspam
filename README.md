@@ -1,10 +1,13 @@
 ## Set Up on Linux ARM x32 (Ts-7553-v2)
 
+(Whenever you see `$` before something, type only what's on that line.)
+
 Have a directory with your `in` and `out` (input and output) folders.
 ```bash
 $ ls -l
 ```
-```bash
+
+```text
 total 0
 drwxr-xr-x 1 dev dev 4096 Mar 27 18:56 in
 drwxr-xr-x 1 dev dev 4096 Mar 27 18:54 out
