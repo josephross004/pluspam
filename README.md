@@ -14,3 +14,6 @@ or for just percentiles:
 $    ./spec_gen -p /home/engineer/test.wav percentiles_streamed.hmsp
 ```
 
+They're both binary files so the file extension doesn't matter so much, but, I've been using `.hmsb` for `H`ybrid `M`illidecade `S`pectrogram `B`inary and `.hmsp` for `H`ybrid `M`illidecade `S`pectrogram `P`ercentiles. 
+
+On windows x64 you can run `python ./src/viewer/gui.py` for a basic visual interface or rendering the `.hmsb` or `.hmsp` data. 
