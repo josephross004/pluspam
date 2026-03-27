@@ -3,6 +3,8 @@
 Have a directory with your `in` and `out` (input and output) folders.
 ```bash
 $ ls -l
+```
+```bash
 total 0
 drwxr-xr-x 1 dev dev 4096 Mar 27 18:56 in
 drwxr-xr-x 1 dev dev 4096 Mar 27 18:54 out
@@ -10,6 +12,8 @@ drwxr-xr-x 1 dev dev 4096 Mar 27 18:54 out
 Then clone this repo into that folder.
 ```bash
 $ git clone https://github.com/josephross004/pluspam
+```
+```bash
 Cloning into 'pluspam'...
 remote: Enumerating objects: 52, done.
 remote: Counting objects: 100% (52/52), done.
