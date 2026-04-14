@@ -52,3 +52,11 @@ clean:
 
 
 .PHONY: run all win mac clean
+
+
+
+# Windows pyinstaller: 
+# pyinstaller --onefile --noconsole `
+    #--add-data "spec_gen.exe;." `
+    #--add-data "libs/win_x64/libfftw3f.a;." `
+    #src/viewer/gui.py
