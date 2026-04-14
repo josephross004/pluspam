@@ -1,5 +1,5 @@
 CXX      := g++
-CXXFLAGS := -std=c++17 -Wall -O3 -march=armv7-a -mfpu=neon -g
+CXXFLAGS := -std=c++17 -Wall -O3 -march=armv7-a -mfpu=neon -g -D_FILE_OFFSET_BITS=32 -D_TIME_BITS=32
 LDFLAGS  := -static -lfftw3f -lm -lpthread
 
 # Windows-specific flags
