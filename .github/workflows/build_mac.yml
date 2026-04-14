@@ -25,12 +25,12 @@ jobs:
 
       - name: Ensure binary is executable
         # Update the path to wherever you committed the binary
-        run: chmod +x dist/mac_arm64/spec_gen_mac
+        run: chmod +x dist/mac64/spec_gen_mac
 
       - name: Bundle with PyInstaller
         run: |
           pyinstaller --onefile --noconsole \
-            --add-data "dist/mac_arm64/spec_gen_mac:." \
+            --add-data "dist/mac64/spec_gen_mac:." \
             src/viewer/gui.py
 
       - name: Upload Mac Executable
