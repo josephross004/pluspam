@@ -1,3 +1,4 @@
+import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 import subprocess
@@ -15,9 +16,20 @@ class SpecGenGUI:
         
         # Base directory (relative to this script's location or hardcoded/detected)
         self.script_dir = os.path.dirname(os.path.abspath(__file__))
-        self.project_root = os.path.abspath(os.path.join(self.script_dir, "..", ".."))
-        
+        if getattr(sys, 'frozen', False):
+            # Running as EXE: Use the directory of the EXE
+            self.project_root = os.path.dirname(os.path.abspath(sys.executable))
+        else:
+            # Running as Script: Use the directory of gui.py, then go up to pluspam/
+            # (src/viewer/gui.py -> up 2 levels -> pluspam/)
+            self.project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
         self.spec_gen_exe = os.path.join(self.project_root, "spec_gen.exe")
+        
+        # --- DEBUG PRINT: This will show in your terminal when you run ./gui.exe ---
+        print(f"DEBUG: Project Root is: {self.project_root}")
+        print(f"DEBUG: Looking for spec_gen at: {self.spec_gen_exe}")
+        print(f"DEBUG: Does it exist? {os.path.exists(self.spec_gen_exe)}")
         if not os.path.exists(self.spec_gen_exe) and os.name != 'nt':
             self.spec_gen_exe = os.path.join(self.project_root, "spec_gen")
 
