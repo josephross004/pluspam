@@ -14,28 +14,31 @@ class SpecGenGUI:
         self.root.title("SpecGen & HMS Viewer")
         self.root.geometry("900x700")
         
-        # Base directory (relative to this script's location or hardcoded/detected)
-        self.script_dir = os.path.dirname(os.path.abspath(__file__))
+        # 1. Detect if we are running inside a PyInstaller bundle
         if getattr(sys, 'frozen', False):
-            # Running as EXE: Use the directory of the EXE
-            self.project_root = os.path.dirname(os.path.abspath(sys.executable))
+            # If bundled, the binary is inside the temp folder (_MEIPASS)
+            self.bundle_dir = sys._MEIPASS
+            # The folder where the .exe actually lives (for saving outputs)
+            self.exe_dir = os.path.dirname(sys.executable)
         else:
-            # Running as Script: Use the directory of gui.py, then go up to pluspam/
-            # (src/viewer/gui.py -> up 2 levels -> pluspam/)
-            self.project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            # If running as script, use standard relative paths
+            self.bundle_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+            self.exe_dir = self.bundle_dir
 
-        self.spec_gen_exe = os.path.join(self.project_root, "spec_gen.exe")
-        
-        # --- DEBUG PRINT: This will show in your terminal when you run ./gui.exe ---
-        print(f"DEBUG: Project Root is: {self.project_root}")
-        print(f"DEBUG: Looking for spec_gen at: {self.spec_gen_exe}")
-        print(f"DEBUG: Does it exist? {os.path.exists(self.spec_gen_exe)}")
-        if not os.path.exists(self.spec_gen_exe) and os.name != 'nt':
-            self.spec_gen_exe = os.path.join(self.project_root, "spec_gen")
+        # 2. Set the Binary Path (bundled inside)
+        if os.name == 'nt':
+            self.spec_gen_exe = os.path.join(self.bundle_dir, "spec_gen.exe")
+        else:
+            self.spec_gen_exe = os.path.join(self.bundle_dir, "spec_gen_mac")
 
+        # 3. Set Default Output Paths (to the folder where the .exe lives, not temp folder!)
         self.input_wav = tk.StringVar()
-        self.output_hmsb = tk.StringVar(value=os.path.join(self.project_root, "output.hmsb"))
-        self.output_hmsp = tk.StringVar(value=os.path.join(self.project_root, "output.hmsp"))
+        self.output_hmsb = tk.StringVar(value=os.path.join(self.exe_dir, "output.hmsb"))
+        self.output_hmsp = tk.StringVar(value=os.path.join(self.exe_dir, "output.hmsp"))
+        
+        # DEBUG
+        print(f"DEBUG: Bundle Dir: {self.bundle_dir}")
+        print(f"DEBUG: Binary Path: {self.spec_gen_exe}")
         
         self.setup_ui()
 
@@ -109,21 +112,18 @@ class SpecGenGUI:
         self.root.update_idletasks()
 
         try:
-            # Add DLL directory to PATH for the subprocess
             env = os.environ.copy()
-            fftw_dir = os.path.join(self.project_root, "fftw_win")
-            env["PATH"] = fftw_dir + os.pathsep + env.get("PATH", "")
+            # Only need to hack the PATH on Windows if using dynamic FFTW
+            if os.name == 'nt':
+                fftw_dir = os.path.join(self.bundle_dir, "fftw_win")
+                env["PATH"] = fftw_dir + os.pathsep + env.get("PATH", "")
 
             cmd = [self.spec_gen_exe, wav, hmsb, hmsp]
+            # On Mac/Linux, we might need to make sure the bundled file has exec permissions
+            if os.name != 'nt':
+                os.chmod(self.spec_gen_exe, 0o755)
+
             result = subprocess.run(cmd, capture_output=True, text=True, env=env)
-            
-            if result.returncode == 0:
-                self.status_var.set("spec_gen completed successfully.")
-                messagebox.showinfo("Success", "Spectral data generated successfully.")
-            else:
-                error_msg = result.stderr if result.stderr else result.stdout
-                self.status_var.set(f"Error: {error_msg}")
-                messagebox.showerror("Execution Error", f"spec_gen failed (code {result.returncode}):\n{error_msg}")
         except Exception as e:
             self.status_var.set(f"Error: {str(e)}")
             messagebox.showerror("Error", f"An unexpected error occurred: {str(e)}")

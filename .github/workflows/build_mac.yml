@@ -1,11 +1,11 @@
-name: Build MacOS Release
+name: Package Mac GUI
 on:
   push:
     tags:
-      - 'v*' # Runs when you push a tag like v1.0
+      - 'v*'
 
 jobs:
-  build-mac:
+  bundle-mac:
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -16,24 +16,21 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Dependencies
-        run: |
-          pip install pyinstaller
-          # Add any other python libs your gui.py needs here
-          # pip install fftw (if needed)
+      - name: Ensure binary is executable
+        run: chmod +x spec_gen_mac
 
-      - name: Compile C++ Binary
+      - name: Install Python Dependencies
         run: |
-          # Since this is running ON a Mac, we just use standard clang++
-          clang++ -std=c++17 -O3 -arch arm64 src/main.cpp -o spec_gen_mac -lfftw3f
+          pip install pyinstaller numpy matplotlib
 
-      - name: Build App with PyInstaller
+      - name: Bundle with PyInstaller
         run: |
-          # We bundle the C++ binary inside the App
+          # --add-data "source_file:destination_inside_app"
+          # On Mac, the separator is a colon ":"
           pyinstaller --onefile --noconsole --add-data "spec_gen_mac:." src/viewer/gui.py
 
-      - name: Upload Artifact
+      - name: Upload Mac Executable
         uses: actions/upload-artifact@v4
         with:
-          name: pluspam-mac-app
+          name: pluspam-macos
           path: dist/gui
