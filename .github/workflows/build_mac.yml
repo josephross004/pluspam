@@ -15,19 +15,23 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-
-      - name: Ensure binary is executable
-        run: chmod +x spec_gen_mac
-
+      
       - name: Install Python Dependencies
         run: |
           pip install pyinstaller numpy matplotlib
 
+      - name: Debug - List files
+        run: find . -name "spec_gen_mac"
+
+      - name: Ensure binary is executable
+        # Update the path to wherever you committed the binary
+        run: chmod +x dist/mac_arm64/spec_gen_mac
+
       - name: Bundle with PyInstaller
         run: |
-          # --add-data "source_file:destination_inside_app"
-          # On Mac, the separator is a colon ":"
-          pyinstaller --onefile --noconsole --add-data "spec_gen_mac:." src/viewer/gui.py
+          pyinstaller --onefile --noconsole \
+            --add-data "dist/mac_arm64/spec_gen_mac:." \
+            src/viewer/gui.py
 
       - name: Upload Mac Executable
         uses: actions/upload-artifact@v4
