@@ -1,6 +1,6 @@
 CXX      := g++
 CXXFLAGS := -std=c++17 -Wall -O3 -march=armv7-a -mfpu=neon -g
-LDFLAGS  := -lfftw3f -lm
+LDFLAGS  := -static -lfftw3f -lm -lpthread
 
 # Windows-specific flags
 WIN_CXXFLAGS := -std=c++17 -Wall -O3 -march=native -g -I./fftw_win
