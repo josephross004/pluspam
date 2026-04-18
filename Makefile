@@ -1,7 +1,7 @@
 SRC		:= src/main.cpp
-TARGET 		:= spec_gen
-WIN_TARGET	:= spec_gen.exe
-MAC_TARGET	:= spec_gen_mac
+TARGET 		:= dist/arm32/spec_gen
+WIN_TARGET	:= dist/win64/spec_gen.exe
+MAC_TARGET	:= dist/mac64/spec_gen_mac
 
 CXX		:= arm-linux-gnueabihf-g++
 CXXFLAGS	:= -std=c++17 -Wall -O3 -march=armv7-a -mfpu=neon -mfloat-abi=hard
@@ -22,7 +22,7 @@ WIN_CXXFLAGS 	:= -std=c++17 -Wall -O3 -march=native -g -I./libs/win_x64
 WIN_LDFLAGS  	:= -L$(WIN_LIBS) -lfftw3f -static-libgcc -static-libstdc++  -lm
 
 # mac flags
-MAC_CXX		:= aarch64-apple-darwin23.5-clang++
+MAC_CXX		:= aarch64-apple-darwin24-clang++
 MAC_CXXFLAGS	:= -std=c++17 -Wall -O3 -arch arm64 -mmacosx-version-min=11.0 -g -I./libs/mac_arm64
 MAC_LDFLAGS 	:= -L$(MAC_LIBS) -lfftw3f -lm -lpthread
 
@@ -32,7 +32,7 @@ OUTPUT      	:= output.hmsb
 OUT_HMSP    	:= output.hmsp
 INPUT       	:= test_files/48k_test.wav
 
-all: $(TARGET)
+all: $(TARGET) $(WIN_TARGET) $(MAC_TARGET)
 
 win: $(WIN_TARGET)
 
@@ -45,6 +45,7 @@ $(WIN_TARGET): $(SRC)
 	$(WIN_CXX) $(WIN_CXXFLAGS) $(SRC) -o $(WIN_TARGET) $(WIN_LDFLAGS)
 
 $(MAC_TARGET): $(SRC)
+	export PATH="./osxcross/target/bin:$$PATH" && \
 	$(MAC_CXX) $(MAC_CXXFLAGS) $(SRC) -o $(MAC_TARGET) $(MAC_LDFLAGS)
 
 clean:
@@ -56,4 +57,4 @@ clean:
 
 
 # Windows pyinstaller: 
-# python -m PyInstaller --onefile --noconsole --add-data "dist/win64/spec_gen.exe;." src/viewer/gui.py
+# python -m PyInstaller --onefile --noconsole --distpath ./dist/win64 --specpath ./dist/win64 --add-data "dist/win64/spec_gen.exe;." src/viewer/gui.py

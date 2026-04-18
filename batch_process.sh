@@ -3,7 +3,7 @@
 # Configuration
 IN_DIR="../in"
 OUT_DIR="../out"
-EXECUTABLE="./spec_gen"
+EXECUTABLE="./dist/arm32/spec_gen"
 
 # Check if executable exists
 if [ ! -f "$EXECUTABLE" ]; then

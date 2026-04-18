@@ -124,6 +124,14 @@ class SpecGenGUI:
                 os.chmod(self.spec_gen_exe, 0o755)
 
             result = subprocess.run(cmd, capture_output=True, text=True, env=env)
+
+            if result.returncode == 0:
+                self.status_var.set("spec_gen completed successfully!")
+                messagebox.showinfo("Success", "spec_gen completed successfully!")
+            else:
+                error_msg = result.stderr.strip() if result.stderr else "Unknown error"
+                self.status_var.set(f"spec_gen failed with code {result.returncode}")
+                messagebox.showerror("Error", f"spec_gen failed with code {result.returncode}\n\n{error_msg}")
         except Exception as e:
             self.status_var.set(f"Error: {str(e)}")
             messagebox.showerror("Error", f"An unexpected error occurred: {str(e)}")

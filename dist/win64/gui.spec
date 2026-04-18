@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['src\\viewer\\gui.py'],
+    ['..\\..\\src\\viewer\\gui.py'],
     pathex=[],
     binaries=[],
-    datas=[('dist/win64/spec_gen.exe', '.')],
+    datas=[('spec_gen.exe', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
